@@ -1,7 +1,7 @@
 import torch
 import matplotlib.pyplot as plt
 import numpy as np
-
+from torch.utils.data import Dataset, DataLoader
 from mpl_toolkits import mplot3d
 
 
@@ -178,3 +178,42 @@ def train_model_SGD(iter):
             b.grad.data.zero_()
 
 train_model_SGD(10)
+
+# Plot out the LOSS_BGD and LOSS_SGD
+LOSS_BGD= [ loss.detach().numpy() for loss in LOSS_BGD] # convert the tensor to a list so we can plot it
+plt.plot(LOSS_BGD,label = "Batch Gradient Descent")
+plt.plot(LOSS_SGD,label = "Stochastic Gradient Descent")
+plt.xlabel('epoch')
+plt.ylabel('Cost/ total loss')
+plt.legend()
+plt.show()
+
+# creating the data set class
+
+class Data(Dataset):
+    # constructor
+    def __init__(self):
+        self.x = torch.arange(-3,3,0.1).view(-1,1)
+        self.y = 1 * self.x - 1
+        self.len = self.x.shape[0]
+        # getter
+    def __getitem__(self,index):
+        return self.x[index], self.y[index]
+    # returns len
+    def __len__(self):
+        return self.len
+
+# create an object
+dataset = Data()
+print("The length of the dataset: ", len(dataset))
+
+# Print the first point
+
+x, y = dataset[0]
+print("(", x, ", ", y, ")")
+
+# Print the first 3 point / training points
+
+x, y = dataset[0:3]
+print("The first 3 x: ", x)
+print("The first 3 y: ", y)
