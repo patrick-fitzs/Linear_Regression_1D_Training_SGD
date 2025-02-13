@@ -117,6 +117,8 @@ get_surface = plot_error_surfaces(15, 13, X, Y, 30)
 w = torch.tensor(-15.0, requires_grad = True)
 b = torch.tensor(-10.0, requires_grad = True)
 
+lr = 0.1 # this is the learning rate
+LOSS_BGD = [] # stores the loss for each iteration
 # define the model
 def train_model(iter):
     for epoch in range(iter):
@@ -127,3 +129,23 @@ def train_model(iter):
 
         # Section for plotting, this converts the weight, bias and loss value to python lists
         get_surface.set_para_loss(w.data.tolist(), b.data.tolist(), loss.tolist())
+        get_surface.plot_ps()
+
+        LOSS_BGD.append(loss)
+
+        loss.backward() # div with respect to the loss
+
+        # update param, slope and bias
+        w.data = w.data - lr * w.grad.data
+        b.data = b.data - lr * b.grad.data
+
+        # zero the gradients before running the backward pass
+        w.grad.data.zero_()
+        b.grad.data.zero_()
+
+train_model(10) #' Train with 10 iteration s
+
+
+### Train the SGD model
+get_surface = plot_error_surfaces(15, 13, X, Y, 30, go = False)
+
