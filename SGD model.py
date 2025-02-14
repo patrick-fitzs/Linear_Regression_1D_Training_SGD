@@ -120,30 +120,6 @@ b = torch.tensor(-10.0, requires_grad = True)
 lr = 0.1 # this is the learning rate
 LOSS_BGD = [] # stores the loss for each iteration
 # define the model
-def train_model(iter):
-    for epoch in range(iter):
-        # make a prediction
-        Yhat = forward(X)
-        #loss
-        loss = criterion(Yhat,Y)
-
-        # Section for plotting, this converts the weight, bias and loss value to python lists
-        get_surface.set_para_loss(w.data.tolist(), b.data.tolist(), loss.tolist())
-        get_surface.plot_ps()
-
-        LOSS_BGD.append(loss)
-
-        loss.backward() # div with respect to the loss
-
-        # update param, slope and bias
-        w.data = w.data - lr * w.grad.data
-        b.data = b.data - lr * b.grad.data
-
-        # zero the gradients before running the backward pass
-        w.grad.data.zero_()
-        b.grad.data.zero_()
-
-train_model(10) #' Train with 10 iteration s
 
 
 ### Train the SGD model
@@ -187,33 +163,3 @@ plt.xlabel('epoch')
 plt.ylabel('Cost/ total loss')
 plt.legend()
 plt.show()
-
-# creating the data set class
-
-class Data(Dataset):
-    # constructor
-    def __init__(self):
-        self.x = torch.arange(-3,3,0.1).view(-1,1)
-        self.y = 1 * self.x - 1
-        self.len = self.x.shape[0]
-        # getter
-    def __getitem__(self,index):
-        return self.x[index], self.y[index]
-    # returns len
-    def __len__(self):
-        return self.len
-
-# create an object
-dataset = Data()
-print("The length of the dataset: ", len(dataset))
-
-# Print the first point
-
-x, y = dataset[0]
-print("(", x, ", ", y, ")")
-
-# Print the first 3 point / training points
-
-x, y = dataset[0:3]
-print("The first 3 x: ", x)
-print("The first 3 y: ", y)
